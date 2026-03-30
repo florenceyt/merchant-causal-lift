@@ -13,7 +13,7 @@ segment     : segment-level CATE analysis and visualization
 """
 
 from causal_lift.preprocess import engineer_features, estimate_propensity, psm_match
-from causal_lift.balance import compute_balance_table, plot_love_plot
+from causal_lift.balance import compute_balance_table, plot_love_plot, plot_overlap
 from causal_lift.model import fit_causal_forest, get_feature_importances
 from causal_lift.segment import (
     add_cate_segments,
@@ -29,6 +29,7 @@ __all__ = [
     "psm_match",
     "compute_balance_table",
     "plot_love_plot",
+    "plot_overlap",
     "fit_causal_forest",
     "get_feature_importances",
     "add_cate_segments",

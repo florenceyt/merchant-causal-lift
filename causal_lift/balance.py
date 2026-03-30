@@ -92,3 +92,47 @@ def plot_love_plot(
         fig.savefig(save_path, dpi=150, bbox_inches="tight")
 
     return fig
+
+
+def plot_overlap(
+    pre_df: pd.DataFrame,
+    post_df: pd.DataFrame,
+    figsize: tuple = (9, 4),
+    save_path: str | None = None,
+) -> plt.Figure:
+    """
+    Propensity score overlap plot: distribution of propensity scores for
+    treated and control units before and after PSM matching.
+
+    Good overlap (common support) is a precondition for valid PSM inference.
+    Gaps or extreme separation indicate regions where causal estimates are
+    extrapolating rather than interpolating.
+    """
+    fig, axes = plt.subplots(1, 2, figsize=figsize, sharey=False)
+
+    for ax, df, title in zip(
+        axes,
+        [pre_df, post_df],
+        ["Before Matching", "After PSM Matching"],
+    ):
+        treated_ps = df.loc[df["treatment"] == 1, "propensity_score"]
+        control_ps = df.loc[df["treatment"] == 0, "propensity_score"]
+
+        ax.hist(control_ps, bins=30, alpha=0.55, color="#4C8BB5",
+                label=f"Control (n={len(control_ps):,})", density=True)
+        ax.hist(treated_ps, bins=30, alpha=0.55, color="#E07B54",
+                label=f"Treated (n={len(treated_ps):,})", density=True)
+
+        ax.set_xlabel("Propensity Score", fontsize=10)
+        ax.set_ylabel("Density", fontsize=10)
+        ax.set_title(title, fontsize=11, fontweight="bold")
+        ax.legend(fontsize=9)
+        ax.grid(alpha=0.3)
+
+    fig.suptitle("Propensity Score Overlap (Common Support)", fontsize=13, fontweight="bold")
+    plt.tight_layout()
+
+    if save_path:
+        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+
+    return fig
